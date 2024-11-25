@@ -1,0 +1,28 @@
+{
+    "id": "19A131CE",
+    "path": "~/opioid_prescribing/R/epd_api_script.R",
+    "project_path": "R/epd_api_script.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": true,
+    "created": 1732527271726.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source039w3izgaznj",
+        "cursorPosition": "0,0",
+        "scrollLine": "0",
+        "marks": "<:1,0\n>:179,54"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1732527249,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1732533440217,
+    "read_only": false,
+    "read_only_alternatives": []
+}
