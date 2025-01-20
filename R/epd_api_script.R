@@ -1,14 +1,4 @@
-# 1. Script details ------------------------------------------------------------
-
-# Name of script: OpenDataAPIQuery
-# Description:  Using R to query the NHSBSA open data portal API. 
-# Created by: Matthew Wilson (NHSBSA)
-# Created on: 26-03-2020
-# Latest update by: Adam Ivison (NHSBSA)
-# Latest update on: 24-06-2021
-# Update notes: Updated endpoint in the script, refactored code and added async
-
-# R version: created in 3.5.3
+# This is all based on the instructional script here: # https://raw.githubusercontent.com/nhsbsa-data-analytics/open-data-portal-api/refs/heads/master/open-data-portal-api.R
 
 # 2. Load packages -------------------------------------------------------------
 
