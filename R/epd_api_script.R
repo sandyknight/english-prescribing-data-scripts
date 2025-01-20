@@ -24,6 +24,8 @@ if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
 }
 
+library(arrow)
+
 # 3. Define variables ----------------------------------------------------------
 
 # Define the url for the API call
@@ -85,11 +87,29 @@ single_month_response <- jsonlite::fromJSON(single_month_api_call)
 single_month_df <- single_month_response$result$result$records
 
 # Lets have a quick look at the data
-str(single_month_df)
 head(single_month_df)
 
-single_month_df |> 
-  dplyr::select(CHEMICAL_SUBSTANCE_BNF_DESCR) |> unique()
+
+# Firstly we need to get a list of all of the names and resource IDs for every 
+# EPD file. We therefore extract the metadata for the EPD dataset.
+metadata_repsonse <- jsonlite::fromJSON(paste0(
+  base_endpoint, 
+  package_show_method,
+  dataset_id
+))
+
+# Resource names and IDs are kept within the resources table returned from the 
+# package_show_method call.
+resources_table <- metadata_repsonse$result$resources
+
+
+resources_table
+
+# We only want data for one calendar year, to do this we need to look at the 
+# name of the data-set to identify the year. For this example we're looking at 
+# 2020.
+resource_name_list <- resources_table$name[grepl("2018|2019|2020|2021|2022", resources_table$name)]
+
 # 5.2. Async -- ----------------------------------------------------------------
 
 # We can call the API asynchronously and this will result in an approx 10x speed 
@@ -99,15 +119,15 @@ single_month_df |>
 async_query <- function(resource_name) {
   paste0(
     "
-    SELECT 
-        * 
-    FROM `", 
-    resource_name, "` 
-    WHERE 
-        1=1 
-    AND pco_code = '", pco_code, "' 
-    AND bnf_chemical_substance = '", bnf_chemical_substance, "'
-    "
+  SELECT 
+      * 
+  FROM `", 
+  resource_name, "` 
+  WHERE 
+      1=1 
+  AND pco_code = '", pco_code, "' 
+  AND bnf_chemical_substance LIKE '", bnf_chemical_substance,"' OR bnf_chemical_substance LIKE '41003%'
+  "
   )
 }
 
@@ -151,7 +171,5 @@ aysnc_df <- do.call(dplyr::bind_rows, async_dfs)
 
 # 6. Export the data -----------------------------------------------------------
 
-# Use write.csv for ease
-write.csv(single_month_df, "single_month.csv")
-write.csv(for_loop_df, "for_loop.csv")
-write.csv(aysnc_df, "aysnc.csv")
+
+arrow::write_parquet(aysnc_df, "data/epd_data.parquet")

@@ -6,9 +6,9 @@ df <- arrow::read_parquet("data/epd_data.parquet") |>
 
 df |> 
   group_by(YEAR_MONTH, CHEMICAL_SUBSTANCE_BNF_DESCR) |> 
-  summarise(TOTAL_QUANTITY = sum(TOTAL_QUANTITY, na.rm = TRUE)) |> 
+  #Osummarise(TOTAL_QUANTITY = sum(TOTAL_QUANTITY, na.rm = TRUE)) |> 
   mutate(date = paste0(YEAR_MONTH, "01")) |> 
-  filter(TOTAL_QUANTITY > 100) |> 
+  #filter(TOTAL_QUANTITY > 100) |> 
   collect() |> 
   mutate(date = as.Date(date, "%Y%m%d")) |> 
   ggplot(aes(x = date, y = TOTAL_QUANTITY)) + 

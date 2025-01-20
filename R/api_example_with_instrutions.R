@@ -112,10 +112,13 @@ metadata_repsonse <- jsonlite::fromJSON(paste0(
 # package_show_method call.
 resources_table <- metadata_repsonse$result$resources
 
+
+resources_table
+
 # We only want data for one calendar year, to do this we need to look at the 
 # name of the data-set to identify the year. For this example we're looking at 
 # 2020.
-resource_name_list <- resources_table$name[grepl("2020", resources_table$name)]
+resource_name_list <- resources_table$name[grepl("2018|2019|2020|2021|2022", resources_table$name)]
 
 # 5.1. For loop ----------------------------------------------------------------
 
