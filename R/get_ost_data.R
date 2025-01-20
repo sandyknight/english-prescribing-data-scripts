@@ -23,7 +23,7 @@ dataset_id <- "english-prescribing-data-epd"
 resource_name <- "EPD_202001" # All EPD data is monthly and uses YYYYMM
 bnf_chemical_substance <- "0410030A0" # Buprenorphine hydrochloride
 
-# Firstly we need to get a list of all of the names and resource IDs for every
+# FList of all of the names and resource IDs for every
 # EPD file. We therefore extract the metadata for the EPD dataset.
 metadata_repsonse <- jsonlite::fromJSON(paste0(
   base_endpoint,
@@ -35,12 +35,8 @@ metadata_repsonse <- jsonlite::fromJSON(paste0(
 # package_show_method call.
 resources_table <- metadata_repsonse$result$resources
 
-# We only want data for one calendar year, to do this we need to look at the
-# name of the data-set to identify the year. For this example we're looking at
-# 2020.
+# I want data from 2020-present
 resource_name_list <- resources_table$name[grepl("202[0-4]", resources_table$name)]
-# We can call the API asynchronously and this will result in an approx 10x speed
-# increase over a for loop for large resource_names by vectorising our approach.
 
 # Construct the SQL query as a function
 async_query <- function(resource_name) {
@@ -73,7 +69,7 @@ async_api_calls <- lapply(
 )
 
 # Use crul::Async to get the results
-# I got rate limited at 5 asynchronous calls for one substance in every area
+# I got rate limited at 5 asynchronous calls for one substance (burprenorphine) across all geographies. 
 # It seems likely that this defeats the point of using async at all but I'm comitted now
 
 get_x_calls <-
