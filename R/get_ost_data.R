@@ -23,14 +23,6 @@ dataset_id <- "english-prescribing-data-epd"
 resource_name <- "EPD_202001" # All EPD data is monthly and uses YYYYMM
 bnf_chemical_substance <- "0410030A0" # Buprenorphine hydrochloride
 
-# FList of all of the names and resource IDs for every
-# EPD file. We therefore extract the metadata for the EPD dataset.
-metadata_repsonse <- jsonlite::fromJSON(paste0(
-  base_endpoint,
-  package_show_method,
-  dataset_id
-))
-
 # Resource names and IDs are kept within the resources table returned from the
 # package_show_method call.
 resources_table <- metadata_repsonse$result$resources
@@ -69,7 +61,7 @@ async_api_calls <- lapply(
 )
 
 # Use crul::Async to get the results
-# I got rate limited at 5 asynchronous calls for one substance (burprenorphine) across all geographies. 
+# I got rate limited at 5 asynchronous calls for one substance (burprenorphine) across all geographies.
 # It seems likely that this defeats the point of using async at all but I'm comitted now
 
 get_x_calls <-
@@ -122,5 +114,6 @@ list_results <- get_data_from_api(calls = async_api_calls, interval = 60)
 
 df <- data.table::rbindlist(l = list_results)
 
-data.table::fwrite(df, "bupe-prescribing-202001-202410.csv")
 
+
+data.table::fwrite(df, "bupe-prescribing-202001-202410.csv")
