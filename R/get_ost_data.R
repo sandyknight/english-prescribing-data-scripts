@@ -16,22 +16,18 @@ datasets_response <- jsonlite::fromJSON(paste0(
   package_list_method
 ))
 
-# We're interested in the English Prescribing Dataset (EPD).
-dataset_id <- "english-prescribing-data-epd"
-
-resource_name <- "EPD_202001" # All EPD data is monthly and uses YYYYMM
-bnf_chemical_substance <- "0410030A0" # Buprenorphine hydrochloride
-
-# Extract the metadata for the EPD dataset.
 metadata_repsonse <- jsonlite::fromJSON(paste0(
   base_endpoint,
   package_show_method,
   dataset_id
 ))
 
-# Resource names and IDs are kept within the resources table returned from the
-# package_show_method call.
-resources_table <- metadata_repsonse$result$resources
+# We're interested in the English Prescribing Dataset (EPD).
+dataset_id <- "english-prescribing-data-epd"
+
+resource_name <- "EPD_202001" # All EPD data is monthly and uses YYYYMM
+bnf_chemical_substance <- "0410030A0" # Buprenorphine hydrochloride
+
 # Resource names and IDs are kept within the resources table returned from the
 # package_show_method call.
 resources_table <- metadata_repsonse$result$resources
@@ -46,7 +42,7 @@ async_query <- function(resource_name) {
     SELECT
         *
     FROM `",
-    resource_name, "`
+        resource_name, "`
     WHERE
         1=1
     AND bnf_chemical_substance = '", bnf_chemical_substance, "'
@@ -70,10 +66,8 @@ async_api_calls <- lapply(
 )
 
 # Use crul::Async to get the results
-# I got rate limited at 5 asynchronous calls for one
-# substance (burprenorphine) across all geographies.
-# It seems likely that this defeats the point of using
-# async at all but I'm comitted now
+# I got rate limited at 5 asynchronous calls for one substance (burprenorphine) across all geographies.
+# It seems likely that this defeats the point of using async at all but I'm comitted now
 
 get_x_calls <-
   function(calls, from, to) {
@@ -107,24 +101,22 @@ parse_api_responses <- function(res) {
 
 get_data_from_api <- function(calls, step = 3, interval = 60) {
 
-  df_list <- list()
-
   froms <- seq(1, length(calls), step)
   tos <- froms + (step - 1)
 
   for (i in seq_along(froms)) {
     res <-  get_x_calls(calls = calls, from = froms[i], to = tos[i])
     df <- parse_api_responses(res)
-    df_list[[i]] <- df
+    data.table::fwrite(df, paste0("data/epd_", paste0(Sys.time(), ".csv")))
     Sys.sleep(interval)
   }
-  return(df_list)
 }
 
-list_results <- get_data_from_api(calls = async_api_calls, interval = 30)
 
-df <- data.table::rbindlist(l = list_results)
+## list_results <- get_data_from_api(calls = async_api_calls, interval = 300)
+
+## df <- data.table::rbindlist(l = list_results)
 
 
 
-data.table::fwrite(df, "bupe-prescribing-202001-202410.csv")
+## data.table::fwrite(df, "bupe-prescribing-202001-202410.csv")
